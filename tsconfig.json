@@ -1,0 +1,15 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "outDir": "build",
+        "module": "commonjs",
+        "target": "es2020",
+        "lib": ["es2020"],
+        "moduleResolution": "node",
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": true,
+        "sourceMap": true
+    },
+    "exclude": ["node_modules", "build"]
+}
