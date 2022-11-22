@@ -41,6 +41,7 @@ app.use(logger())
 
 app.use(router.routes()).use(router.allowedMethods())
 
-app.listen(30000, () => {
+const PORT = process.env.PORT ?? 3001
+app.listen(PORT, () => {
     console.log('Koa start success')
 })
