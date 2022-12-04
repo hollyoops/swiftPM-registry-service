@@ -4,7 +4,7 @@ import fetch from 'node-fetch'
 export const listPackages = async function (ctx: Context) {
     const packageURL = `https://${ctx.host}/dummy/moya/moya/15.0.3`
     ctx.set({
-        Link: `<https://github.com/moya/moya>; rel="canonical",<${packageURL}>; rel="latest-version"`,
+        Link: `<${packageURL}>; rel="latest-version",<https://github.com/moya/moya>; rel="canonical"`,
         'Content-Version': '1',
         'Content-Type': 'application/json',
     })
@@ -62,14 +62,19 @@ export const fetchManifestForPackage = async function (ctx: Context) {
 
 export const downloadSourceCode = async function (ctx: Context) {
     const url = 'https://api.github.com/repos/Moya/Moya/zipball/refs/tags/15.0.3'
-    const response = await fetch(url)
+    const hash = 'c263811c1f3dbf002be9bd83107f7cdc38992b26'
+    const digestBase64 = Buffer.from(hash).toString('base64')
+
     ctx.set({
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': 'public, immutable',
         'Content-Type': 'application/zip',
         'Content-Disposition': 'attachment; filename="Moya-Moya-15.0.3-0-gc263811"',
-        Digest: 'sha-256=c263811c1f3dbf002be9bd83107f7cdc38992b26',
+        Digest: `sha-256=${digestBase64}`,
         Link: `<${url}>;type="application/zip"`,
         'Content-Version': '1',
     })
+    const response = await fetch(url)
     ctx.body = response.body
 }
 
