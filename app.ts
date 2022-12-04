@@ -10,7 +10,7 @@ const app = new Koa()
 app.use(headers)
 app.use(logger())
 app.use(customLogger)
-app.use(router.routes())
+app.use(router.routes()).use(router.allowedMethods())
 
 app.listen(PORT, () => {
     console.log('Swift registry services started successfully!')

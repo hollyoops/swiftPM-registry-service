@@ -2,9 +2,9 @@ import { Context } from 'koa'
 import fetch from 'node-fetch'
 
 export const listPackages = async function (ctx: Context) {
-    const packageURL = `https://${ctx.host}/dummy/moya/moya/15.0.3`
+    const packageURL = `https://${ctx.host}/moya/moya/15.0.3`
     ctx.set({
-        Link: `<${packageURL}>; rel="latest-version",<https://github.com/moya/moya>; rel="canonical"`,
+        Link: `<${packageURL}>; rel="latest-version"`,
         'Content-Type': 'application/json',
     })
     ctx.body = {
@@ -30,7 +30,7 @@ export const listPackages = async function (ctx: Context) {
 
 export const fetchMetaForPackage = async function (ctx: Context) {
     ctx.set({
-        Link: `<https://${ctx.host}/dummy/moya/moya/15.0.3>; rel="latest-version"`,
+        Link: `<https://${ctx.host}/moya/moya/15.0.3>; rel="latest-version"`,
         'Content-Type': 'application/json',
     })
     ctx.body = {
