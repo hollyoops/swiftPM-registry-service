@@ -5,7 +5,6 @@ export const listPackages = async function (ctx: Context) {
     const packageURL = `https://${ctx.host}/dummy/moya/moya/15.0.3`
     ctx.set({
         Link: `<${packageURL}>; rel="latest-version",<https://github.com/moya/moya>; rel="canonical"`,
-        'Content-Version': '1',
         'Content-Type': 'application/json',
     })
     ctx.body = {
@@ -55,7 +54,6 @@ export const fetchManifestForPackage = async function (ctx: Context) {
     ctx.set({
         'Content-Type': 'text/x-swift',
         'Content-Disposition': `attachment; filename="Package@swift-${toolVersion}.swift"`,
-        'Content-Version': '1',
     })
     ctx.body = response.body
 }
@@ -72,7 +70,6 @@ export const downloadSourceCode = async function (ctx: Context) {
         'Content-Disposition': 'attachment; filename="Moya-Moya-15.0.3-0-gc263811"',
         Digest: `sha-256=${digestBase64}`,
         Link: `<${url}>;type="application/zip"`,
-        'Content-Version': '1',
     })
     const response = await fetch(url)
     ctx.body = response.body
@@ -80,7 +77,6 @@ export const downloadSourceCode = async function (ctx: Context) {
 
 export const getIdentifiers = async function (ctx: Context) {
     ctx.set({
-        'Content-Version': '1',
         'Content-Type': 'application/json',
     })
     ctx.body = {
