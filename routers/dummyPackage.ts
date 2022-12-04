@@ -1,4 +1,5 @@
 import Router = require('@koa/router')
+import { health, info, serverVersion } from '../controller/base'
 import {
     downloadSourceCode,
     fetchManifestForPackage,
@@ -14,5 +15,8 @@ packageRouter.get('/:scope/:package/:version(\\d+.\\d+$|\\d+.\\d+.\\d+$)', fetch
 packageRouter.get('/:scope/:package/:version/Package.swift', fetchManifestForPackage)
 packageRouter.get('/:scope/:package/:version(\\d+.\\d+.zip$|\\d+.\\d+.\\d+.zip$)', downloadSourceCode)
 packageRouter.get('/identifiers', getIdentifiers)
+packageRouter.get('/api/system/version', serverVersion)
+packageRouter.get('/__health', health)
+packageRouter.get('/', info)
 
 export default packageRouter
