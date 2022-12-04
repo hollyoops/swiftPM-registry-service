@@ -2,27 +2,28 @@ import { Context } from 'koa'
 import fetch from 'node-fetch'
 
 export const listPackages = async function (ctx: Context) {
+    const packageURL = `https://${ctx.host}/dummy/moya/moya/15.0.3`
     ctx.set({
-        Link: `<https://github.com/moya/moya>; rel="canonical",<https://${ctx.host}/dummy/moya/moya/15.0.3>; rel="latest-version"`,
+        Link: `<https://github.com/moya/moya>; rel="canonical",<${packageURL}>; rel="latest-version"`,
         'Content-Version': '1',
         'Content-Type': 'application/json',
     })
     ctx.body = {
         releases: {
             '15.0.3': {
-                url: 'https://api.github.com/repos/Moya/Moya/zipball/refs/tags/15.0.3',
+                url: packageURL,
             },
             '15.0.1': {
-                url: 'https://api.github.com/repos/Moya/Moya/zipball/refs/tags/15.0.1',
+                url: packageURL,
             },
             '15.0.0': {
-                url: 'https://api.github.com/repos/Moya/Moya/zipball/refs/tags/15.0.0',
+                url: packageURL,
             },
             '14.0.1': {
-                url: 'https://api.github.com/repos/Moya/Moya/zipball/refs/tags/14.0.1',
+                url: packageURL,
             },
             '14.0.0': {
-                url: 'https://api.github.com/repos/Moya/Moya/zipball/refs/tags/14.0.0',
+                url: packageURL,
             },
         },
     }
