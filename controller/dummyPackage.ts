@@ -1,39 +1,46 @@
 import { Context } from 'koa'
 import fetch from 'node-fetch'
-
-const zipHash = 'b073488c4b31bfc760903aaaf965db73a9d0be687c3656566c9d653fdecd0507'
-const mockId = 'hollyoops.ReactiveForm'
-const scopeName = 'hollyoops/ReactiveForm'
-const tVersion = '0.2.0'
-const subPath = `${scopeName}/${tVersion}`
+import { IGithubTag, IPackageReleases } from './types'
+import { parseRequestArgs, getDownloadUrl, checksumRemoteFile, getIdentifiersForURLs } from './utils'
 
 export const listPackages = async function (ctx: Context) {
-    const packageURL = `https://${ctx.host}/${subPath}`
-    ctx.set({
-        Link: `<${packageURL}>; rel="latest-version"`,
-        'Content-Type': 'application/json',
-    })
-    ctx.body = {
-        releases: {
-            '0.2.0': {
-                url: packageURL,
+    const { scope, pkg } = parseRequestArgs(ctx)
+    const githubTags = `https://api.github.com/repos/${scope}/${pkg}/tags`
+    const response = await fetch(githubTags)
+    const tags: [IGithubTag] = await response.json()
+    const releases = tags.reduce((pre: IPackageReleases, current: IGithubTag) => {
+        const releaseVersion = current.name
+        const url = `https://${ctx.host}/${scope}/${pkg}/${releaseVersion}`
+        return {
+            ...pre,
+            [releaseVersion]: {
+                url,
             },
-            '0.1.0': {
-                url: packageURL,
-            },
-        },
+        }
+    }, {})
+
+    ctx.set('Content-Type', 'application/json')
+    if (tags.length > 0) {
+        const lastVersion = `https://${ctx.host}/${scope}/${pkg}/${tags[0].name}`
+        ctx.set('Link', `<${lastVersion}>; rel="latest-version"`)
     }
+
+    ctx.body = { releases }
 }
 
 export const fetchMetaForPackage = async function (ctx: Context) {
-    const packageURL = `https://${ctx.host}/${subPath}`
+    const zipUrl = getDownloadUrl(ctx)
+    const zipHash = await checksumRemoteFile(zipUrl)
+    const { scope, pkg, version } = parseRequestArgs(ctx)
+    const releaseUrl = `https://${ctx.host}/${scope}/${pkg}/${version}`
     ctx.set({
-        Link: `<${packageURL}>; rel="latest-version"`,
+        Link: `<${releaseUrl}>; rel="latest-version"`,
         'Content-Type': 'application/json',
     })
+
     ctx.body = {
-        id: mockId,
-        version: ctx.params.version,
+        id: `${scope}.${pkg}`,
+        version: version,
         resources: [
             {
                 name: 'source-archive',
@@ -47,7 +54,8 @@ export const fetchMetaForPackage = async function (ctx: Context) {
 
 export const fetchManifestForPackage = async function (ctx: Context) {
     const toolVersion = ctx.query['swift-version'] || '5.7'
-    const url = `https://raw.githubusercontent.com/${subPath}/Package.swift`
+    const { scope, pkg, version } = parseRequestArgs(ctx)
+    const url = `https://raw.githubusercontent.com/${scope}/${pkg}/${version}/Package.swift`
     const response = await fetch(url)
     ctx.set({
         'Content-Type': 'text/x-swift',
@@ -57,26 +65,28 @@ export const fetchManifestForPackage = async function (ctx: Context) {
 }
 
 export const downloadSourceCode = async function (ctx: Context) {
-    const url = `https://api.github.com/repos/${scopeName}/zipball/refs/tags/${tVersion}`
-    const digestBase64 = Buffer.from(zipHash).toString('base64')
+    const { scope, pkg, version } = parseRequestArgs(ctx)
+    const url = `https://api.github.com/repos/${scope}/${pkg}/zipball/refs/tags/${version}`
+    // const digestBase64 = Buffer.from(zipHash).toString('base64')
 
     ctx.set({
         'Accept-Ranges': 'bytes',
         'Cache-Control': 'public, immutable',
         'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="${tVersion}.zip"`,
-        Digest: `sha-256=${digestBase64}`,
+        'Content-Disposition': `attachment; filename="${version}.zip"`,
+        // Digest: `sha-256=${digestBase64}`,
         Link: `<${url}>;type="application/zip"`,
     })
     const response = await fetch(url)
     ctx.body = response.body
 }
 
-export const getIdentifiers = async function (ctx: Context) {
+export const getIdentifiers = function (ctx: Context) {
     ctx.set({
         'Content-Type': 'application/json',
     })
+
     ctx.body = {
-        identifiers: [mockId],
+        identifiers: getIdentifiersForURLs(ctx.query.url),
     }
 }
