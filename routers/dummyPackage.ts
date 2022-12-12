@@ -1,12 +1,12 @@
 import Router = require('@koa/router')
-import { health, info, serverVersion } from '../controller/base'
+import { health, info, serverVersion } from '../controllers/base'
 import {
     downloadSourceCode,
     fetchManifestForPackage,
     fetchMetaForPackage,
     getIdentifiers,
     listPackages,
-} from '../controller/dummyPackage'
+} from '../controllers/dummyPackage'
 
 const packageRouter = new Router()
 
