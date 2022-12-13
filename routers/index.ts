@@ -7,7 +7,7 @@ import {
     fetchManifestForPackage,
     downloadSourceCode,
     getIdentifiers,
-} from '../controllers/dummyPackage'
+} from '../controllers/package'
 
 const router = new Router()
 
