@@ -59,13 +59,19 @@ const authFetch = async (
     headersInit: HeadersInit | undefined = undefined,
     bodyInit: BodyInit | undefined = undefined,
 ) => {
-    return await fetch(url, {
+    const response = await fetch(url, {
         headers: {
             Authorization: `Bearer ${GITHUB_ACCESS_TOKEN}`,
             ...headersInit,
         },
         body: bodyInit,
     })
+
+    if (!response.ok) {
+        throw 'Github service error'
+    }
+
+    return response
 }
 
 const getDownloadUrl = function (scope: string, pkg: string, version: string): string {

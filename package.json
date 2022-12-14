@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-ts": "tsc --watch",
     "start": "ts-node app.ts",
-    "start:dev": "tsnd --respawn app.ts",
+    "start:dev": "GITHUB_ACCESS_TOKEN='your token' tsnd --respawn app.ts",
     "prettier:fix": "prettier --write \"**/*.{ts,md}\"",
     "lint:fix": "eslint --max-warnings 0 --fix --ext .ts",
     "lint:check": "eslint --max-warnings 0 --ext .ts",

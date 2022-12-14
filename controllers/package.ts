@@ -26,7 +26,7 @@ export const listPackages = async function (ctx: Context) {
 
 export const fetchMetaForPackage = async function (ctx: Context) {
     const { scope, pkg, version } = parseRequestArgs(ctx)
-    const zipHash = fetchZipHash(scope, pkg, version)
+    const zipHash = await fetchZipHash(scope, pkg, version)
 
     ctx.set({
         Link: `<https://${ctx.host}/${scope}/${pkg}/${version}>; rel="latest-version"`,
@@ -78,6 +78,6 @@ export const getIdentifiers = function (ctx: Context) {
     })
 
     ctx.body = {
-        identifiers: fetchIdentifiers,
+        identifiers: fetchIdentifiers(ctx.query.url),
     }
 }
