@@ -2,6 +2,7 @@ import fetch, { BodyInit, HeadersInit, RequestInfo } from 'node-fetch'
 import { IFileInfo, IGithubTag, IZipBarFile } from './types'
 import { GITHUB_ACCESS_TOKEN } from '../shared/config'
 import * as crypto from 'crypto'
+import { HTTPResponseError } from '../shared/responseErrors'
 
 export const fetchTags = async function (scope: string, pkg: string): Promise<[IGithubTag]> {
     const githubTags = `https://api.github.com/repos/${scope}/${pkg}/tags`
@@ -68,7 +69,8 @@ const authFetch = async (
     })
 
     if (!response.ok) {
-        throw 'Github service error'
+        console.log('token: ' + GITHUB_ACCESS_TOKEN)
+        throw new HTTPResponseError(response)
     }
 
     return response
