@@ -16,7 +16,7 @@ export const listPackages = async function (ctx: Context) {
             `<ssh://git@github.com:${scope}/${pkg}.git>; rel="alternate"`,
         ]
 
-        ctx.append('Link', links)
+        ctx.append('Link', links.join(','))
     }
 
     const releases = tags.reduce((pre: IPackageReleases, current: IGithubTag) => {
