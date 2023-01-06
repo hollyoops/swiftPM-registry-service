@@ -9,7 +9,14 @@ export const listPackages = async function (ctx: Context) {
 
     ctx.set('Content-Type', 'application/json')
     if (tags.length > 0) {
-        ctx.set('Link', `<https://${ctx.host}/${scope}/${pkg}/${tags[0].name}>; rel="latest-version"`)
+        const latestVersion = tags[0].name
+        const links = [
+            `<https://${ctx.host}/${scope}/${pkg}/${latestVersion}>; rel="latest-version"`,
+            `<https://github.com/${scope}/${pkg}>; rel="canonical"`,
+            `<ssh://git@github.com:${scope}/${pkg}.git>; rel="alternate"`,
+        ]
+
+        ctx.append('Link', links)
     }
 
     const releases = tags.reduce((pre: IPackageReleases, current: IGithubTag) => {
