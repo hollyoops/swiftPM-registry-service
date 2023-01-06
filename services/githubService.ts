@@ -60,9 +60,15 @@ const authFetch = async (
     headersInit: HeadersInit | undefined = undefined,
     bodyInit: BodyInit | undefined = undefined,
 ) => {
+    const authHeader = GITHUB_ACCESS_TOKEN ? { Authorization: `Bearer ${GITHUB_ACCESS_TOKEN}` } : {}
+
+    if (!GITHUB_ACCESS_TOKEN) {
+        console.warn('No github token!')
+    }
+
     const response = await fetch(url, {
         headers: {
-            Authorization: `Bearer ${GITHUB_ACCESS_TOKEN}`,
+            ...authHeader,
             ...headersInit,
         },
         body: bodyInit,
